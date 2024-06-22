@@ -1,3 +1,8 @@
+Links to download UVmaps:
+https://www.dropbox.com/scl/fo/2la67wc5noe0qh855xd77/AJICRux2JReKDmCiWAu4FZU?rlkey=yu78iwgj2bi3pkh1or3si1vwh&dl=0
+
+
+
 # Greenscreen Video Processing Script Greenscreen.py
 
 This Python script processes RGB and mask videos to apply a greenscreen effect. It takes an RGB video and a corresponding mask video as input, and produces an output video where the masked areas are replaced with a green background.
