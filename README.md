@@ -1,4 +1,4 @@
-# Greenscreen Video Processing Script
+# Greenscreen Video Processing Script Greenscreen.py
 
 This Python script processes RGB and mask videos to apply a greenscreen effect. It takes an RGB video and a corresponding mask video as input, and produces an output video where the masked areas are replaced with a green background.
 
@@ -86,3 +86,84 @@ python greenscreen_processor.py --rgb_video_path input.mp4 --mask_video_path mas
 
 This command will process 'input.mp4' with 'mask.mp4', splitting the input frame, applying a blur of 5 to the mask, using edge extension, and saving debug images. The result will be saved as 'output.mp4'.# masky
 Tools for distorting and undistorting videos and using masks to create greenscreen videos
+
+
+
+
+
+# UV Map Video Distortion Script undistort_02.py
+
+This Python script applies UV map distortion to an input video based on a provided TIFF UV map. It processes the video frame by frame, applies the distortion, and creates a new output video.
+
+## Requirements
+
+- Python 3.x
+- OpenCV (cv2)
+- NumPy
+- PyTorch
+- tifffile
+- tqdm
+- ffmpeg (command-line tool)
+
+## Usage
+
+```
+python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv_map UV_MAP [--split] [--num_workers NUM_WORKERS] [--temp_folder TEMP_FOLDER] [--blur BLUR]
+```
+
+## Arguments
+
+1. `--input_video`: Path to the input video file.
+   - This is the RGB video you want to distort.
+
+2. `--output_video`: Path to the output video file.
+   - This is where the distorted video will be saved.
+
+3. `--uv_map`: Path to the UV map TIFF file.
+   - This TIFF file contains the UV map used for distorting the video.
+
+4. `--split` (optional): Flag to split the video in half.
+   - If set, only the left half of each frame will be processed.
+   - Default: False
+
+5. `--num_workers` (optional): Number of worker threads for parallel processing.
+   - This determines how many frames are processed simultaneously.
+   - Default: 4
+
+6. `--temp_folder` (optional): Temporary folder for intermediate files.
+   - This folder will be used to store individual processed frames before combining them into a video.
+   - Default: 'temp'
+
+7. `--blur` (optional): Gaussian blur kernel size.
+   - If set to a value greater than 0, a Gaussian blur will be applied to the output frames.
+   - Default: 0 (no blur)
+
+## How It Works
+
+1. **Loading the UV Map**: The script loads the TIFF UV map and extracts the U and V components.
+
+2. **Video Processing**:
+   - The input video is read frame by frame.
+   - If the `--split` option is used, only the left half of each frame is processed.
+   - Each frame is resized to 2048x2048.
+   - The UV map distortion is applied to each frame using the `apply_uv_map` function.
+   - The distorted frame is resized back to a maximum of 2048x2048 using Lanczos interpolation.
+   - If blur is specified, it's applied to the frame.
+   - The processed frame is saved as a PNG file in the temporary folder.
+
+3. **Parallel Processing**: The script uses a ThreadPoolExecutor to process multiple frames in parallel, speeding up the operation.
+
+4. **Video Creation**: After all frames are processed, ffmpeg is used to combine the PNG files into a video, using the following settings:
+   - Frame rate: 30 fps
+   - Codec: libx264
+   - Preset: slow
+   - CRF: 18
+   - Pixel format: yuv420p
+
+5. **Cleanup**: The temporary folder and its contents are deleted after the video is created.
+
+## Notes
+
+- The script uses Lanczos interpolation for resizing to maintain high image quality.
+- The output video is scaled to fit within 2048x2048 dimensions while preserving the aspect ratio.
+- Make sure you have ffmpeg installed and accessible in your system's PATH for the video creation step.
