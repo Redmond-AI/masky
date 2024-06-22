@@ -113,7 +113,7 @@ This Python script applies UV map distortion to an input video based on a provid
 ## Usage
 
 ```
-python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv_map UV_MAP [--split] [--num_workers NUM_WORKERS] [--temp_folder TEMP_FOLDER] [--blur BLUR]
+python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv_map UV_MAP [--split] [--num_workers NUM_WORKERS] [--temp_folder TEMP_FOLDER] [--blur BLUR] [--max_res MAX_RES]
 ```
 
 ## Arguments
@@ -143,6 +143,10 @@ python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv
    - If set to a value greater than 0, a Gaussian blur will be applied to the output frames.
    - Default: 0 (no blur)
 
+8. `--max_res` (optional): Maximum resolution for output frames.
+   - This sets the maximum width and height for the processed frames.
+   - Default: 2048
+
 ## How It Works
 
 1. **Loading the UV Map**: The script loads the TIFF UV map and extracts the U and V components.
@@ -150,9 +154,9 @@ python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv
 2. **Video Processing**:
    - The input video is read frame by frame.
    - If the `--split` option is used, only the left half of each frame is processed.
-   - Each frame is resized to 2048x2048.
+   - Each frame is resized to the specified `max_res` x `max_res`.
    - The UV map distortion is applied to each frame using the `apply_uv_map` function.
-   - The distorted frame is resized back to a maximum of 2048x2048 using Lanczos interpolation.
+   - The distorted frame is resized back to a maximum of `max_res` x `max_res` using Lanczos interpolation.
    - If blur is specified, it's applied to the frame.
    - The processed frame is saved as a PNG file in the temporary folder.
 
@@ -164,11 +168,13 @@ python script_name.py --input_video INPUT_VIDEO --output_video OUTPUT_VIDEO --uv
    - Preset: slow
    - CRF: 18
    - Pixel format: yuv420p
+   - Output resolution: Scaled to fit within `max_res` x `max_res`, preserving aspect ratio
 
 5. **Cleanup**: The temporary folder and its contents are deleted after the video is created.
 
 ## Notes
 
 - The script uses Lanczos interpolation for resizing to maintain high image quality.
-- The output video is scaled to fit within 2048x2048 dimensions while preserving the aspect ratio.
+- The output video is scaled to fit within the specified `max_res` dimensions while preserving the aspect ratio.
 - Make sure you have ffmpeg installed and accessible in your system's PATH for the video creation step.
+- The `max_res` parameter allows you to control the maximum resolution of the output video, which can be useful for managing file size and processing time.
